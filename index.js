@@ -1,7 +1,10 @@
 const inquirerTablePrompt = require('inquirer-table-prompt');
+const fs = require('fs');
+const path = require('path');
 const pkg = require('./package.json');
 const slugify = require('@sindresorhus/slugify');
 const { getSetupForData, getSetupForPage } = require('./lib/setup');
+const fileWriters = require('./lib/file-writers');
 
 module.exports.name = pkg.name;
 
@@ -178,7 +181,7 @@ module.exports.getSetup = ({ chalk, data, inquirer }) => {
             {
                 type: 'table',
                 name: 'models',
-                message: 'Choose a type for each of the following models:',
+                message: 'Please select models to include',
                 pageSize: 7,
                 rows: data.models.map((model, index) => ({
                     name: `${model.modelLabel || model.modelName}\n${chalk.dim(`└${model.source}`)}`,
@@ -186,57 +189,24 @@ module.exports.getSetup = ({ chalk, data, inquirer }) => {
                 })),
                 columns: [
                     {
-                        name: 'Page',
-                        value: 'page'
-                    },
-                    {
-                        name: 'Data',
-                        value: 'data'
+                        name: 'Include',
+                        value: true
                     },
                     {
                         name: 'Skip',
-                        value: undefined
+                        value: false
                     }
                 ]
             }
-        ]);
-        const dataModels = [];
-        const pageModels = [];
-
-        modelTypes.forEach((type, index) => {
-            if (type === 'data') {
-                dataModels.push(data.models[index]);
-            } else if (type === 'page') {
-                pageModels.push(data.models[index]);
-            }
+        ]);        
+        let models = [];
+        modelTypes.forEach((model, index) => {            
+            if (model)
+                models.push(data.models[index]);                
         });
 
-        let queue = Promise.resolve({ data: [], pages: [] });
-
-        pageModels.forEach((model, index) => {
-            queue = queue.then(async setupData => {
-                console.log(
-                    `\nConfiguring page: ${chalk.bold(model.modelLabel || model.modelName)} ${chalk.reset.italic.green(
-                        `(${index + 1} of ${pageModels.length}`
-                    )})`
-                );
-
-                return getSetupForPage({ chalk, data, inquirer, model, setupData });
-            });
-        });
-
-        dataModels.forEach((model, index) => {
-            queue = queue.then(async setupData => {
-                console.log(
-                    `\nConfiguring data object: ${chalk.bold(model.modelLabel || model.modelName)} ${chalk.reset.italic.green(
-                        `(${index + 1} of ${dataModels.length}`
-                    )})`
-                );
-
-                return getSetupForData({ chalk, data, inquirer, model, setupData });
-            });
-        });
-
-        return queue;
+        const filePath = path.join(process.cwd(), '_data', 'data.js');
+        fileWriters.writeJS(filePath);
+        return models;
     };
 };
