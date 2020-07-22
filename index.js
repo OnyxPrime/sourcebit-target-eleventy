@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const pkg = require('./package.json');
 const slugify = require('@sindresorhus/slugify');
-const { getSetupForData, getSetupForPage } = require('./lib/setup');
 const fileWriters = require('./lib/file-writers');
 
 module.exports.name = pkg.name;
