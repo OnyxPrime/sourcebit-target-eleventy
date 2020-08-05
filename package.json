@@ -1,7 +1,7 @@
 {
-  "name": "sourcebit-target-hugo",
+  "name": "sourcebit-target-eleventy",
   "version": "0.2.1",
-  "description": "A Sourcebit plugin for Hugo",
+  "description": "A Sourcebit plugin for 11ty",
   "main": "index.js",
   "scripts": {
     "test": "npm run format",
