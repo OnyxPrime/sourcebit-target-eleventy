@@ -57,3 +57,5 @@ This plugin expects the following data buckets to exist:
 ## 📤 Output
 
 This plugin creates creates a JavaScript (data.js) file in the `_data` folder.
+
+![Analytics](https://kentico-ga-beacon.azurewebsites.net/api/UA-69014260-4/Kentico/sourcebit-target-eleventy?pixel)
